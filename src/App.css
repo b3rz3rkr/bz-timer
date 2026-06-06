@@ -1,0 +1,40 @@
+.timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 200px;
+  margin: 50px  auto;
+  gap: 20px; 
+}
+
+.time {
+  font-size: 50px;
+  margin: 20px auto;
+} 
+
+
+.timer-input {
+  gap: 20px;
+  display: flex;
+  flex-direction: row;
+}
+
+.timer-input input {
+  width: 90px;
+  box-sizing: border-box;
+}
+
+.timer-buttons {
+  gap: 20px;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  width: 200px;
+  padding: 0;
+  margin: 0;
+}
+
+.timer-button {
+  flex-grow: 1;
+}
