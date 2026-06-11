@@ -1,29 +1,25 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { timeToMs, msToTimeSting, isSameSecond } from '../helpers';
+import type { Time } from '../types';
 
-interface Time {
-    min: number;
-    sec: number;
+interface Props {
+    onFinish?: () => void;
 }
 
-const pad = (n: number, len = 2) => String(n).padStart(len, '0');
+const initTime: Time = { hours: 0, min: 0, sec: 0 };
 
-const transformTime = (ms: number): string => {
-    const d = new Date(ms);
-    const cs = Math.floor(d.getUTCMilliseconds() / 10);
-    return [
-        pad(d.getUTCHours()),
-        pad(d.getUTCMinutes()),
-        pad(d.getUTCSeconds()),
-        pad(cs)
-    ].join(':');
-};
-
-const useTimer = () => {
+const useTimer = (props?: Props) => {
     const [started, setStarted] = useState<number>();
-    const [timer, setTimer] = useState<Time>({ min: 0, sec: 0 });
+    const [timer, setTimer] = useState<Time>(initTime);
     const [elapsed, setElapsed] = useState<number>(0);
 
-    const timerMs = useMemo(() => (timer.min * 60 + timer.sec) * 1000, [timer]);
+    const onFinishRef = useRef(props?.onFinish);
+
+    const timerMs = useMemo(() => timeToMs(timer), [timer]);
+
+    useEffect(() => {
+        onFinishRef.current = props?.onFinish;
+    });
 
     useEffect(() => {
         if (!started) return;
@@ -34,7 +30,9 @@ const useTimer = () => {
             const newElapsed = performance.now() - started;
             if (newElapsed >= timerMs) {
                 setStarted(undefined);
-                setElapsed(timerMs);
+                const same = isSameSecond(newElapsed, timerMs);
+                setElapsed(same ? timerMs : newElapsed);
+                if (onFinishRef.current) onFinishRef.current();
                 return;
             }
             setElapsed(newElapsed);
@@ -47,10 +45,12 @@ const useTimer = () => {
 
     const startTimer = () => {
         setStarted(performance.now());
+        setElapsed(0);
     };
 
     const resetTimer = () => {
         setStarted(undefined);
+        setTimer(initTime);
         setElapsed(0);
     };
 
@@ -68,7 +68,8 @@ const useTimer = () => {
         resetTimer,
         pauseTimer,
         resumeTimer,
-        time: transformTime(elapsed),
+        elapsed,
+        time: msToTimeSting(elapsed),
         timer,
         started
     };

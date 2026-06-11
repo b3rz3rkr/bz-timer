@@ -1,4 +1,12 @@
-import useTimer from '../hooks/useTimer.ts';
+import { useTimer } from '../hooks';
+import type { ChangeEvent } from 'react';
+import { pad, timeToMs, msToTimeSting, inRange } from '../helpers';
+
+const onTimerEnd = () => {
+    console.log('💣 💥 B0000M!');
+};
+
+const MAX_HOURS = 31 * 24 - 1;
 
 const Timer = () => {
     const {
@@ -8,44 +16,93 @@ const Timer = () => {
         resumeTimer,
         resetTimer,
         pauseTimer,
-        time
-    } = useTimer();
-    const submitForm = (formData: FormData) => {
-        const timer = {
-            min: parseInt(formData.get('min') || 0),
-            sec: parseInt(formData.get('sec') || 0)
+        elapsed,
+        time,
+        timer
+    } = useTimer({ onFinish: onTimerEnd });
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        const { target } = e;
+        const { name, min, max, value } = target;
+        const numVal = Number(value);
+        const range = {
+            min: Number(min),
+            max: Number(max)
         };
-        setTimer(timer);
-        startTimer();
+
+        if (!isNaN(numVal) && inRange(numVal, range)) {
+            const newTimer = {
+                ...timer,
+                [name]: numVal
+            };
+            setTimer(newTimer);
+        }
     };
+
     return (
-        <form className={'timer'} action={submitForm}>
+        <form className={'timer'}>
             <div className={'time'}>{time}</div>
+            <div>
+                <div className={'target-time'}>
+                    {msToTimeSting(timeToMs(timer))}
+                </div>
+                <div className={'target-time placeholder'}>hh:mm:ss:cs</div>
+            </div>
             <div className={'timer-input'}>
-                <input
-                    type={'number'}
-                    name={'min'}
-                    placeholder={'00'}
-                    min={0}
-                />
-                <input
-                    type={'number'}
-                    name={'sec'}
-                    placeholder={'00'}
-                    min={0}
-                    max={59}
-                />
+                <label>
+                    <input
+                        type={'number'}
+                        inputMode={'numeric'}
+                        name={'hours'}
+                        min={0}
+                        max={MAX_HOURS}
+                        value={pad(timer.hours)}
+                        onChange={handleChange}
+                    />
+                    h
+                </label>
+                :
+                <label>
+                    <input
+                        type={'number'}
+                        inputMode={'numeric'}
+                        name={'min'}
+                        min={0}
+                        max={59}
+                        value={pad(timer.min)}
+                        onChange={handleChange}
+                    />
+                    m
+                </label>
+                :
+                <label>
+                    <input
+                        type={'number'}
+                        inputMode={'numeric'}
+                        name={'sec'}
+                        min={0}
+                        max={59}
+                        value={pad(timer.sec)}
+                        onChange={handleChange}
+                    />
+                    s
+                </label>
             </div>
             <div className={'timer-buttons'}>
-                <button className={'timer-button'} type={'submit'}>
-                    start
+                <button
+                    className={'timer-button'}
+                    type={'button'}
+                    onClick={startTimer}
+                >
+                    {started || elapsed ? 'restart' : 'start'}
                 </button>
                 <button
                     className={'timer-button'}
                     onClick={started ? pauseTimer : resumeTimer}
                     type={'button'}
+                    disabled={!elapsed}
                 >
-                    {started ? 'pause' : 'resume'}
+                    {started || !elapsed ? 'pause' : 'resume'}
                 </button>
                 <button
                     className={'timer-button'}

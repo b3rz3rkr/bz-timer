@@ -3,26 +3,39 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 200px;
+  max-width: 320px;
   margin: 50px  auto;
   gap: 20px; 
 }
 
 .time {
   font-size: 50px;
-  margin: 20px auto;
+  margin: 20px auto 5px;
 } 
 
+.target-time {
+  font-size: 20px;
+  font-family: monospace;
+}
+
+.target-time.placeholder {
+  opacity: 0.3;
+}
 
 .timer-input {
-  gap: 20px;
+  gap: 10px;
   display: flex;
   flex-direction: row;
 }
 
 .timer-input input {
-  width: 90px;
+  width: 50px;
   box-sizing: border-box;
+}
+
+.timer-input label {
+  display: flex;
+  gap: 4px;
 }
 
 .timer-buttons {
@@ -30,11 +43,12 @@
   display: flex;
   flex-direction: row;
   flex-grow: 1;
-  width: 200px;
+  width: 250px;
   padding: 0;
   margin: 0;
 }
 
 .timer-button {
   flex-grow: 1;
+  flex-basis: 70px;
 }
