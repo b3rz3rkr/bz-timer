@@ -93,6 +93,7 @@ const Timer = () => {
                     className={'timer-button'}
                     type={'button'}
                     onClick={startTimer}
+                    disabled={timeToMs(timer) === 0}
                 >
                     {started || elapsed ? 'restart' : 'start'}
                 </button>
