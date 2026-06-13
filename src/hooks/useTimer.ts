@@ -32,7 +32,7 @@ const useTimer = (props?: Props) => {
                 setStarted(undefined);
                 const same = isSameSecond(newElapsed, timerMs);
                 setElapsed(same ? timerMs : newElapsed);
-                if (onFinishRef.current) onFinishRef.current();
+                onFinishRef?.current?.();
                 return;
             }
             setElapsed(newElapsed);
