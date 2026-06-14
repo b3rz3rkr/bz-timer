@@ -17,7 +17,7 @@ const Timer = () => {
         resetTimer,
         pauseTimer,
         elapsed,
-        time,
+        elapsedTimeString,
         timer
     } = useTimer({ onFinish: onTimerEnd });
 
@@ -41,7 +41,7 @@ const Timer = () => {
 
     return (
         <form className={'timer'}>
-            <div className={'time'}>{time}</div>
+            <div className={'time'}>{elapsedTimeString}</div>
             <div>
                 <div className={'target-time'}>
                     {msToTimeSting(timeToMs(timer))}

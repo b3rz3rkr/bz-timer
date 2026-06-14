@@ -69,7 +69,7 @@ const useTimer = (props?: Props) => {
         pauseTimer,
         resumeTimer,
         elapsed,
-        time: msToTimeSting(elapsed),
+        elapsedTimeString: msToTimeSting(elapsed),
         timer,
         started
     };
