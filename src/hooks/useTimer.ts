@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useEffectEvent, useMemo, useState } from 'react';
 import { timeToMs, msToTimeSting, isSameSecond } from '../helpers';
 import type { Time } from '../types';
 
@@ -13,12 +13,10 @@ const useTimer = (props?: Props) => {
     const [timer, setTimer] = useState<Time>(initTime);
     const [elapsed, setElapsed] = useState<number>(0);
 
-    const onFinishRef = useRef(props?.onFinish);
-
     const timerMs = useMemo(() => timeToMs(timer), [timer]);
 
-    useEffect(() => {
-        onFinishRef.current = props?.onFinish;
+    const onFinish = useEffectEvent(() => {
+        props?.onFinish?.();
     });
 
     useEffect(() => {
@@ -32,7 +30,7 @@ const useTimer = (props?: Props) => {
                 setStarted(undefined);
                 const same = isSameSecond(newElapsed, timerMs);
                 setElapsed(same ? timerMs : newElapsed);
-                onFinishRef?.current?.();
+                onFinish();
                 return;
             }
             setElapsed(newElapsed);
